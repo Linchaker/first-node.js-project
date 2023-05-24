@@ -1,0 +1,4 @@
+.vscode-test
+.idea/
+node_modules/
+.env
