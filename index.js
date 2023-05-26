@@ -3,6 +3,8 @@ const path = require('path')
 const mongoose = require('mongoose');
 require('dotenv').config();
 const exphbs = require('express-handlebars')
+const methodOverride = require('method-override')
+
 const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
 const addRoutes = require('./routes/add')
@@ -19,8 +21,12 @@ app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
+// set access to public folder as root folder
 app.use(express.static(path.join(__dirname, 'public')))
+// enable parse forms
 app.use(express.urlencoded({extended: true}))
+// enable put/delete http method support
+app.use(methodOverride('_method'))
 
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
