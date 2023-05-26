@@ -7,25 +7,13 @@ class Url {
         try {
           // Проверяем, является ли URL действительным
           new URL(path);
+          resolve(true)
         } catch (error) {
           resolve(false);
           return;
         }
         
-        http.get(url, (response) => {
-          const { statusCode } = response;
-    
-          if (statusCode === 200) {
-            // Ссылка доступна
-            resolve(true);
-          } else {
-            // Ссылка не доступна
-            resolve(false);
-          }
-        }).on('error', (error) => {
-          // Ошибка при проверке доступности ссылки
-          reject(error);
-        });
+        
       });
     }
 }
