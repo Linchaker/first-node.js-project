@@ -9,6 +9,7 @@ const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
 const addRoutes = require('./routes/add')
 const coursesRoutes = require('./routes/courses')
+const User = require('./models/user')
 
 const app = express()
 
@@ -20,6 +21,16 @@ const hbs = exphbs.create({
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
+
+app.use(async (req, res, next) => {
+  try {
+    const user = await User.findById('6471ebccefc403dd0ed70a2d')
+    req.user = user
+    next()
+  } catch (e) {
+    console.log(e);
+  }
+})
 
 // set access to public folder as root folder
 app.use(express.static(path.join(__dirname, 'public')))
@@ -41,7 +52,17 @@ async function start() {
   .connect(process.env.MONGO_CONNECT, {useNewUrlParser: true})
   .then((res) => console.log('Connected to DB'))
   .catch((error) => console.log(error));
- 
+  
+  const candidate = await User.findOne()
+  if (!candidate) {
+    const user = new User({
+      email: 'test@test.com',
+      name: 'Linchaker',
+      cart: {items: []}
+    })
+    await user.save()
+  }
+
   app.listen(process.env.PORT, process.env.HOST, (error) => {
     error ? console.log(error) : console.log(`Server running at http://${process.env.HOST}:${process.env.PORT}/`);
   })
