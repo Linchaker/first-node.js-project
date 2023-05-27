@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
+const session = require('express-session')
+
 
 const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
@@ -12,6 +14,8 @@ const ordersRoutes = require('./routes/orders')
 const coursesRoutes = require('./routes/courses')
 const authRoutes = require('./routes/auth')
 const User = require('./models/user')
+
+const varMiddleware = require('./middleware/variables')
 
 
 const app = express()
@@ -41,6 +45,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 // enable put/delete http method support
 app.use(methodOverride('_method'))
+// enable sessions
+app.use(session({
+  secret: 'some secret value',
+  resave: false,
+  saveUninitialized: false
+}))
+// custom middleware
+app.use(varMiddleware)
 
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
