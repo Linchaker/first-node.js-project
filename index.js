@@ -5,6 +5,7 @@ require('dotenv').config();
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
+const MongoStore = require('connect-mongodb-session')(session)
 
 
 const homeRoutes = require('./routes/home')
@@ -24,20 +25,24 @@ const hbs = exphbs.create({
   defaultLayout: 'main',
   extname: 'hbs'
 })
+const store = new MongoStore({
+  collection: 'sessions',
+  uri: process.env.MONGO_CONNECT
+})
 
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
-app.use(async (req, res, next) => {
-  try {
-    const user = await User.findById('6471ebccefc403dd0ed70a2d')
-    req.user = user
-    next()
-  } catch (e) {
-    console.log(e);
-  }
-})
+// app.use(async (req, res, next) => {
+//   try {
+//     const user = await User.findById('6471ebccefc403dd0ed70a2d')
+//     req.user = user
+//     next()
+//   } catch (e) {
+//     console.log(e);
+//   }
+// })
 
 // set access to public folder as root folder
 app.use(express.static(path.join(__dirname, 'public')))
@@ -49,7 +54,8 @@ app.use(methodOverride('_method'))
 app.use(session({
   secret: 'some secret value',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store
 }))
 // custom middleware
 app.use(varMiddleware)
@@ -69,16 +75,6 @@ async function start() {
   .connect(process.env.MONGO_CONNECT, {useNewUrlParser: true})
   .then((res) => console.log('Connected to DB'))
   .catch((error) => console.log(error));
-  
-  const candidate = await User.findOne()
-  if (!candidate) {
-    const user = new User({
-      email: 'test@test.com',
-      name: 'Linchaker',
-      cart: {items: []}
-    })
-    await user.save()
-  }
 
   app.listen(process.env.PORT, process.env.HOST, (error) => {
     error ? console.log(error) : console.log(`Server running at http://${process.env.HOST}:${process.env.PORT}/`);
