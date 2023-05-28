@@ -17,6 +17,7 @@ const authRoutes = require('./routes/auth')
 const User = require('./models/user')
 
 const varMiddleware = require('./middleware/variables')
+const userMiddleware = require('./middleware/user')
 
 
 const app = express()
@@ -59,6 +60,7 @@ app.use(session({
 }))
 // custom middleware
 app.use(varMiddleware)
+app.use(userMiddleware)
 
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
