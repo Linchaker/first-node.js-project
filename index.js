@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose');
 const csrf = require('csurf')
+const flash = require('connect-flash')
 require('dotenv').config();
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
@@ -15,7 +16,6 @@ const addRoutes = require('./routes/add')
 const ordersRoutes = require('./routes/orders')
 const coursesRoutes = require('./routes/courses')
 const authRoutes = require('./routes/auth')
-const User = require('./models/user')
 
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
@@ -36,16 +36,6 @@ app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
-// app.use(async (req, res, next) => {
-//   try {
-//     const user = await User.findById('6471ebccefc403dd0ed70a2d')
-//     req.user = user
-//     next()
-//   } catch (e) {
-//     console.log(e);
-//   }
-// })
-
 // set access to public folder as root folder
 app.use(express.static(path.join(__dirname, 'public')))
 // enable parse forms
@@ -60,6 +50,7 @@ app.use(session({
   store
 }))
 app.use(csrf())
+app.use(flash())
 // custom middleware
 app.use(varMiddleware)
 app.use(userMiddleware)
