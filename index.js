@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose');
+const csrf = require('csurf')
 require('dotenv').config();
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
@@ -58,6 +59,7 @@ app.use(session({
   saveUninitialized: false,
   store
 }))
+app.use(csrf())
 // custom middleware
 app.use(varMiddleware)
 app.use(userMiddleware)
