@@ -1,9 +1,9 @@
 const express = require('express')
+const config = require('./config')
 const path = require('path')
 const mongoose = require('mongoose');
 const csrf = require('csurf')
 const flash = require('connect-flash')
-require('dotenv').config();
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
@@ -29,7 +29,7 @@ const hbs = exphbs.create({
 })
 const store = new MongoStore({
   collection: 'sessions',
-  uri: process.env.MONGO_CONNECT
+  uri: config.MONGO_CONNECT
 })
 
 app.engine('hbs', hbs.engine)
@@ -44,7 +44,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 // enable sessions
 app.use(session({
-  secret: 'some secret value',
+  secret: config.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store
@@ -67,12 +67,12 @@ app.use('/auth', authRoutes)
 async function start() {
   try {
     await mongoose
-  .connect(process.env.MONGO_CONNECT, {useNewUrlParser: true})
+  .connect(config.MONGO_CONNECT, {useNewUrlParser: true})
   .then((res) => console.log('Connected to DB'))
   .catch((error) => console.log(error));
 
-  app.listen(process.env.PORT, process.env.HOST, (error) => {
-    error ? console.log(error) : console.log(`Server running at http://${process.env.HOST}:${process.env.PORT}/`);
+  app.listen(config.PORT, config.HOST, (error) => {
+    error ? console.log(error) : console.log(`Server running at http://${config.HOST}:${config.PORT}/`);
   })
   } catch (e) {
     console.log(e);
