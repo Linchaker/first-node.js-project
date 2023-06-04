@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const csrf = require('csurf')
 const flash = require('connect-flash')
 const helmet = require('helmet')
+const compression = require('compression')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
@@ -66,6 +67,7 @@ app.use(helmet({
     },
   },
 }))
+app.use(compression())
 // custom middleware
 app.use(varMiddleware)
 app.use(userMiddleware)
