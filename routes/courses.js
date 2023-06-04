@@ -4,6 +4,7 @@ const Course = require('../models/course')
 const auth = require('../middleware/auth')
 const {courseValidators} = require('../utils/validators')
 const router = Router()
+const Url = require('../helpers/url')
 
 function isOwner(course, req) {
   return course.userId.toString() === req.user._id.toString()
@@ -83,6 +84,12 @@ router.post('/remove', auth, async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
+    // Проверяем доступность URL перед рендерингом шаблона
+    const isUrlAvailable = await Url.check(course.img);
+    if (!isUrlAvailable) {
+      course.img = ''
+    }
+
     res.render('course', {
       layout: 'empty',
       title: `Курс ${course.title}`,

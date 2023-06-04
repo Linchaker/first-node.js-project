@@ -59,7 +59,13 @@ app.use(session({
 app.use(fileMiddleware.single('avatar'))
 app.use(csrf())
 app.use(flash())
-app.use(helmet())
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      "img-src": ["'self'", "https: data:"],
+    },
+  },
+}))
 // custom middleware
 app.use(varMiddleware)
 app.use(userMiddleware)
