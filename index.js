@@ -21,6 +21,7 @@ const profileRoutes = require('./routes/profile')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
 const errorHandler = require('./middleware/error')
+const fileMiddleware = require('./middleware/file')
 
 
 const app = express()
@@ -41,6 +42,8 @@ app.set('views', 'views')
 
 // set access to public folder as root folder
 app.use(express.static(path.join(__dirname, 'public')))
+// set access to image folder
+app.use('/images', express.static(path.join(__dirname, 'images')))
 // enable parse forms
 app.use(express.urlencoded({extended: true}))
 // enable put/delete http method support
@@ -52,6 +55,7 @@ app.use(session({
   saveUninitialized: false,
   store
 }))
+app.use(fileMiddleware.single('avatar'))
 app.use(csrf())
 app.use(flash())
 // custom middleware
