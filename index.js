@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose');
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const helmet = require('helmet')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
@@ -58,6 +59,7 @@ app.use(session({
 app.use(fileMiddleware.single('avatar'))
 app.use(csrf())
 app.use(flash())
+app.use(helmet())
 // custom middleware
 app.use(varMiddleware)
 app.use(userMiddleware)
